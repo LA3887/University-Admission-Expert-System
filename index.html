@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Admission Expert System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .header-bg { background: linear-gradient(135deg, #0d6efd, #0a58ca); color: white; padding: 25px; border-radius: 10px 10px 0 0; }
+        .card-custom { border-radius: 10px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .trace-box { background-color: #1e1e1e; color: #00ff66; font-family: 'Courier New', Courier, monospace; padding: 15px; border-radius: 8px; min-height: 120px; }
+    </style>
+</head>
+<body class="py-4">
+    <div class="container">
+        <div class="card card-custom mb-4">
+            <div class="header-bg text-center">
+                <h2 class="fw-bold mb-1">University Admission Expert System</h2>
+                <p class="mb-0 text-light opacity-75">AI Forward Chaining Inference Engine with Explanation Trace</p>
+            </div>
+            
+            <div class="card-body p-4">
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <div class="row">
+                        <!-- Input Section -->
+                        <div class="col-md-6 border-end pe-md-4">
+                            <h4 class="text-secondary border-bottom pb-2 mb-3">Student Marks & Details</h4>
+                            
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Student Name</label>
+                                <input type="text" name="student_name" class="form-control" placeholder="Enter student name" value="{{ student_name|default:'' }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">F.Sc / Intermediate Academic Field</label>
+                                <select name="field" class="form-select" required>
+                                    <option value="Pre-Engineering" {% if field == 'Pre-Engineering' %}selected{% endif %}>Pre-Engineering</option>
+                                    <option value="ICS" {% if field == 'ICS' %}selected{% endif %}>ICS (Computer Science)</option>
+                                    <option value="Pre-Medical" {% if field == 'Pre-Medical' %}selected{% endif %}>Pre-Medical</option>
+                                    <option value="I.Com / Arts" {% if field == 'I.Com / Arts' %}selected{% endif %}>I.Com / General Science / Arts</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Matric Percentage (%)</label>
+                                <input type="number" step="0.01" name="matric_percentage" class="form-control" placeholder="e.g. 85" value="{{ matric_marks|default:'' }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">F.Sc Percentage (%)</label>
+                                <input type="number" step="0.01" name="fsc_percentage" class="form-control" placeholder="e.g. 78" value="{{ fsc_marks|default:'' }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Entry Test Marks (Out of 100)</label>
+                                <input type="number" step="0.01" name="entry_test_marks" class="form-control" placeholder="e.g. 70" value="{{ entry_test_marks|default:'' }}">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 mt-2 py-2 fw-bold">Run AI Expert System Analysis</button>
+                        </div>
+
+                        <!-- Results Section -->
+                        <div class="col-md-6 ps-md-4 mt-4 mt-md-0">
+                            <h4 class="text-secondary border-bottom pb-2 mb-3">Evaluation Results</h4>
+                            
+                            <div class="alert alert-info border-start border-4 border-info">
+                                <h5 class="mb-0">Aggregate Score: <span class="fw-bold text-dark">{{ aggregate|default:'0' }}%</span></h5>
+                            </div>
+
+                            <h5 class="mt-4 text-success fw-bold">Eligible Degree Programs:</h5>
+                            {% if eligible %}
+                                <ul class="list-group mb-3">
+                                    {% for item in eligible %}
+                                        <li class="list-group-item list-group-item-success fw-semibold">✓ {{ item }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-muted fst-italic">Not eligible for any degree program based on current credentials.</p>
+                            {% endif %}
+
+                            <h5 class="mt-3 text-danger fw-bold">Non-Eligible Degree Programs:</h5>
+                            {% if non_eligible %}
+                                <ul class="list-group">
+                                    {% for item in non_eligible %}
+                                        <li class="list-group-item list-group-item-light text-muted">✗ {{ item }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-muted fst-italic">None</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </form>
+
+                <!-- AI Execution Trace Box -->
+                <div class="row mt-4 pt-3 border-top">
+                    <div class="col-12">
+                        <h5 class="fw-bold text-dark mb-2">AI Explanation Engine (Rule Execution Trace)</h5>
+                        <div class="trace-box">
+                            {% if trace %}
+                                {% for log in trace %}
+                                    <div>&gt; {{ log }}</div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-secondary">&gt; Fill in student marks and click run to view Forward Chaining AI decisions.</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
